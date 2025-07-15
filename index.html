@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>微信代码</title>
+  <style>
+    /* 全局样式重置 & 基础设置 */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      /* 微信风格的绿色渐变背景 */
+      background: linear-gradient(135deg, #075E54 0%, #128C7E 50%, #25D366 100%);
+      color: #333;
+      min-height: 100vh;
+    }
+
+    /* 大标题样式 */
+    h1 {
+      text-align: center;
+      font-size: 2.5rem;
+      color: #fff;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      margin-top: 20px;
+      padding: 20px 0;
+      background: rgba(0, 0, 0, 0.1);
+    }
+
+    /* 容器：居中、限制宽度、响应式 */
+    .container {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+    }
+
+    /* 玻璃质感卡片 */
+    .card {
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    /* 卡片标题 */
+    .card h2 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: #fff;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    /* 代码展示区域：滚动、样式优化 */
+    .code-content {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 15px;
+      white-space: pre-wrap;
+      word-break: break-all;
+      max-height: 200px;
+      overflow-y: auto;
+      color: #f8f9fa;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    /* 按钮组：复制、预览 */
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.2s ease;
+    }
+
+    .btn-copy {
+      background: #007bff;
+      color: #fff;
+    }
+
+    .btn-preview {
+      background: #28a745;
+      color: #fff;
+    }
+
+    .btn:hover {
+      opacity: 0.9;
+      transform: scale(1.02);
+    }
+
+    /* 预览弹窗：模拟微信对话 */
+    .preview-modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 90%;
+      max-width: 500px;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      display: none;
+      z-index: 9999;
+    }
+
+    .preview-modal.show {
+      display: block;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      cursor: pointer;
+      font-size: 1.2rem;
+      color: #555;
+      background: transparent;
+      border: none;
+    }
+
+    .modal-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: #333;
+    }
+
+    /* 模拟微信对话气泡 */
+    .chat-box {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .chat-message {
+      max-width: 70%;
+      padding: 10px 15px;
+      border-radius: 18px;
+      line-height: 1.4;
+    }
+
+    .mine {
+      background: #d3eafd;
+      align-self: flex-end;
+    }
+
+    .other {
+      background: #f1f1f1;
+      align-self: flex-start;
+    }
+
+    /* 提示卡片样式 */
+    .notice-card {
+      grid-column: 1 / -1; /* 跨所有列 */
+      background: rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      padding: 30px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .notice-card h2 {
+      font-size: 1.5rem;
+      margin-bottom: 15px;
+      color: #fff;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .notice-card p {
+      font-size: 1.1rem;
+      line-height: 1.8;
+      color: #f0f0f0;
+    }
+
+    .notice-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      animation: shine 3s infinite;
+    }
+
+    @keyframes shine {
+      100% {
+        left: 100%;
+      }
+    }
+
+    /* 适配手机端：调整间距、字体 */
+    @media (max-width: 768px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
+
+      .code-content {
+        font-size: 0.9rem;
+      }
+
+      .notice-card h2 {
+        font-size: 1.3rem;
+      }
+
+      .notice-card p {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- 添加大标题 -->
+  <h1>微信代码</h1>
+  <div class="container">
+    <!-- 卡片1：点击即回复代码 -->
+    <div class="card">
+      <h2>点击即回复</h2>
+      <div class="code-content" id="code1">
+        &lt;a href="weixin://bizmsgmenu?msgmenucontent=想让对方发送的内容&amp;msgmenuid=960"&gt;点击我&lt;/a&gt;
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-copy" data-code-id="code1">复制代码</button>
+        <button class="btn btn-preview" data-preview-type="reply" data-content="想让对方发送的内容">预览效果</button>
+      </div>
+    </div>
+
+    <!-- 卡片2：点击打微信电话 -->
+    <div class="card">
+      <h2>点击打微信电话</h2>
+      <div class="code-content" id="code2">
+        &lt;a href="weixin://voip/callagain/?username=对方微信号"&gt;点击给指定人打微信电话&lt;/a&gt;
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-copy" data-code-id="code2">复制代码</button>
+        <button class="btn btn-preview" data-preview-type="call">预览说明</button>
+      </div>
+    </div>
+
+    <!-- 提示卡片 -->
+    <div class="notice-card">
+      <h2>提示</h2>
+      <p>发送代码时需要引用对方任意一条消息，否则对方看到的将是一串代码而不是可点击的链接。</p>
+    </div>
+  </div>
+
+  <!-- 预览弹窗 -->
+  <div class="preview-modal" id="previewModal">
+    <button class="modal-close">×</button>
+    <div class="modal-title">预览内容</div>
+    <div class="chat-box" id="chatBox">
+      <!-- 动态插入内容 -->
+    </div>
+  </div>
+
+  <script>
+    // 页面加载完成后执行
+    document.addEventListener('DOMContentLoaded', function () {
+      // 获取DOM元素
+      const previewModal = document.getElementById('previewModal');
+      const modalTitle = previewModal.querySelector('.modal-title');
+      const chatBox = document.getElementById('chatBox');
+      const closeButton = previewModal.querySelector('.modal-close');
+
+      // 复制代码功能
+      document.querySelectorAll('.btn-copy').forEach(button => {
+        button.addEventListener('click', function () {
+          const codeId = this.getAttribute('data-code-id');
+          const codeElement = document.getElementById(codeId);
+          const code = codeElement.textContent;
+
+          navigator.clipboard.writeText(code).then(() => {
+            alert('代码已复制到剪贴板！');
+          }).catch(err => {
+            console.error('复制失败：', err);
+            alert('复制失败，请手动复制');
+          });
+        });
+      });
+
+      // 预览功能
+      document.querySelectorAll('.btn-preview').forEach(button => {
+        button.addEventListener('click', function () {
+          const type = this.getAttribute('data-preview-type');
+
+          if (type === 'reply') {
+            const content = this.getAttribute('data-content');
+            // 设置预览内容
+            modalTitle.textContent = '微信对话预览';
+            chatBox.innerHTML = `
+              <div class="chat-message mine">点击我</div>
+              <div class="chat-message other">（对方点击后）${content}</div>
+            `;
+          } else if (type === 'call') {
+            // 微信电话预览说明
+            modalTitle.textContent = '功能说明';
+            chatBox.innerHTML = `
+              <div style="line-height: 1.6;">
+                <p>输入想给对方打电话的微信号，点击链接后，会唤起微信电话功能。</p>
+              </div>
+            `;
+          }
+
+          // 显示弹窗
+          previewModal.classList.add('show');
+        });
+      });
+
+      // 关闭弹窗
+      closeButton.addEventListener('click', function () {
+        previewModal.classList.remove('show');
+      });
+
+      // 点击弹窗外部也可以关闭
+      previewModal.addEventListener('click', function (e) {
+        if (e.target === previewModal) {
+          previewModal.classList.remove('show');
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>
