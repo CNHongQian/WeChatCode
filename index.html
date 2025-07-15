@@ -19,6 +19,8 @@
       background: linear-gradient(135deg, #075E54 0%, #128C7E 50%, #25D366 100%);
       color: #333;
       min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
 
     /* 大标题样式 */
@@ -40,6 +42,7 @@
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       gap: 30px;
+      flex: 1;
     }
 
     /* 玻璃质感卡片 */
@@ -223,6 +226,41 @@
       }
     }
 
+    /* 页脚样式 */
+    footer {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 20px 0;
+      margin-top: 40px;
+      text-align: center;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+      color: #fff;
+      font-size: 1rem;
+    }
+
+    .footer-links {
+      margin-top: 10px;
+    }
+
+    .footer-links a {
+      color: #e0f7fa;
+      text-decoration: none;
+      margin: 0 10px;
+      transition: color 0.2s ease;
+    }
+
+    .footer-links a:hover {
+      color: #ffffff;
+      text-decoration: underline;
+    }
+
     /* 适配手机端：调整间距、字体 */
     @media (max-width: 768px) {
       .container {
@@ -239,6 +277,15 @@
 
       .notice-card p {
         font-size: 1rem;
+      }
+
+      .footer-content {
+        font-size: 0.9rem;
+      }
+
+      .footer-links a {
+        display: inline-block;
+        margin: 5px 10px;
       }
     }
   </style>
@@ -278,6 +325,17 @@
       <p>发送代码时需要引用对方任意一条消息，否则对方看到的将是一串代码而不是可点击的链接。</p>
     </div>
   </div>
+
+  <!-- 页脚 -->
+  <footer>
+    <div class="footer-content">
+      <div>虹芡 · 2025</div>
+      <div class="footer-links">
+        <a href="https://space.bilibili.com/3546581192149863?spm_id_from=333.337.0.0" target="_blank">Bilibili</a>
+        <a href="https://github.com/CNHongQian" target="_blank">Github</a>
+      </div>
+    </div>
+  </footer>
 
   <!-- 预览弹窗 -->
   <div class="preview-modal" id="previewModal">
